@@ -103,8 +103,8 @@ public class CalendarUtils {
         return (found) ? tz : TimeZone.getDefault();
     }
 
-    String getDate(Calendar calendar) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+    public static String getDate(Calendar calendar) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT")); // Added for UTC
         return formatter.format(calendar.getTime());
     }

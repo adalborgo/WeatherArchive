@@ -53,11 +53,10 @@ public class SunData {
 
 	/**
 	 * Constructor
-	 * 
-	 * @param double latitude
-	 * @param double longitude
-	 * @param String timeZone
-	 * @param Calendar calendar
+	 *
+	 * @param latitude
+	 * @param longitude
+	 * @param calendar
 	 *
 	 * calendar = new GregorianCalendar(year, month-1, day, hour, minute, second);
 	 * calendar = Calendar.getInstance();
@@ -192,8 +191,8 @@ public class SunData {
 
 	/**
 	 * Return solar altitude
-	 * @param String pattern
-	 * @return String altitude
+	 * @param pattern
+	 * @return altitude
 	 */
 	public String getAltitude(String pattern) {
 		formD.applyPattern(pattern); //Cifre decimali
@@ -330,7 +329,7 @@ public class SunData {
 	/**
 	 * Set calendar based on the current time in the given time zone
 	 *
-	 * @param TimeZone timeZone
+	 * @param timeZone
 	 * @return Calendar
 	 */
 	public static Calendar setCalendar(TimeZone timeZone) {
@@ -340,9 +339,14 @@ public class SunData {
 
 	/**
 	 * Set calendar with the given date and time set for the default time zone
-	 *
-	 * @param TimeZone timeZone
-	 * @return Calendar
+	 * @param year
+	 * @param month
+	 * @param day
+	 * @param hourOfDay
+	 * @param minute
+	 * @param second
+	 * @param timeZone
+	 * @return
 	 */
 	public static Calendar setCalendar(int year, int month, int day,
 			int hourOfDay, int minute, int second, TimeZone timeZone) {
@@ -354,8 +358,13 @@ public class SunData {
 	/**
 	 * Set calendar with the given date and time set for the default time zone
 	 *
-	 * @param TimeZone timeZone
-	 * @return Calendar
+	 * @param year
+	 * @param month
+	 * @param day
+	 * @param hourOfDay
+	 * @param minute
+	 * @param second
+	 * @return
 	 */
 	public static Calendar setCalendar(int year, int month, int day,
 			int hourOfDay, int minute, int second) {
@@ -400,7 +409,7 @@ public class SunData {
 
 	/**
 	 * Converts minutes in hh:mm
-	 * @param double minutes
+	 * @param minutes
 	 */
 	private String formatHHMM(double minutes) {
 		if (minutes>1440) return "Overflow";
@@ -463,7 +472,7 @@ public class SunData {
 		
 		// Altra data
 		int year   = 2014;
-		int month  = 6; // Range: 1..12
+		int month  = 10; // Range: 1..12
 		int day	   = 14;
 		int hour   = 13;
 		int minute = 12;

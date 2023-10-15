@@ -45,7 +45,7 @@ public class FileDataJS implements Constants {
 	boolean coordinates = shared.getCoordinates();
 	boolean dst = false; // Daylight saving time
 	TimeZone timeZone = shared.getTimeZoneJS();
-	Calendar calendar = SunData.setCalendar(timeZone);
+	/// Calendar calendar = SunData.setCalendar(timeZone); // Calendar.getInstance();
 
 	SunData sunData; // = new SunData(latitude, longitude, calendar);
 
@@ -55,6 +55,7 @@ public class FileDataJS implements Constants {
 	public void genJs(DataOfDay dataOfDay, float monthRainAll, float yearRainAll,
 					  TimeZone timeZone, String writePathName) {
 
+		Calendar calendar = Calendar.getInstance();
 		this.dst = CalendarUtils.getDST(new Date(), timeZone.getID());
 
 		double value;
@@ -187,7 +188,6 @@ public class FileDataJS implements Constants {
 
 			// Sunrise, sunset, etc.
 			if (coordinates) { //http://it.wikipedia.org/wiki/Radiazione_solare_globale_in_Italia
-
 				sunData = new SunData(latitude, longitude, calendar);
 				int offsetFromUTC = sunData.getOffsetFromUTC(timeZone);
 
@@ -203,6 +203,7 @@ public class FileDataJS implements Constants {
 
 				if(dataOfDay.getSunrad()>10 && sunData.getAltitude()>5) {
 					value = (100*dataOfDay.getSunrad())/(SOLAR_CONSTANT *Math.sin(Math.PI*sunData.getAltitude()/180));
+					if (value>99) value = -1;
 				} else {
 					value = -1;
 				}
