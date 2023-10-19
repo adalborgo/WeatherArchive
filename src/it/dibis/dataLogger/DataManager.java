@@ -25,7 +25,7 @@ public class DataManager implements Constants {
     //=====================================//
 
     // Revision control id
-    public static final String CVSID = "$Id: DataManager.java,v 0.10 05/10/2023 23:59:59 adalborgo $";
+    public static final String CVSID = "$Id: DataManager.java,v 0.11 19/10/2023 23:59:59 adalborgo $";
 
     private final int COMBILOG = -1;
     private final int DAVIS_JSON = 0;
@@ -262,8 +262,8 @@ public class DataManager implements Constants {
         dataOfDay.setRain_all(lastRainfallOfDay);
         dataOfDay.setRawOfArray(SAMPLES_OF_DAY); // Meglio ripetere!?
 
-        // Get rainAll of the month and the year
-        updateFiles.getAllRain(yesterDay, yesterMonth, yesterYear);
+        // ??? Get rainAll of the month and the year: moved to updateMonthEvent()
+        /// updateFiles.getAllRain(yesterDay, yesterMonth, yesterYear);
 
         // Don't use dataOfDay.setHeader()
         dataOfDay.setDay(yesterDay);
@@ -301,6 +301,8 @@ public class DataManager implements Constants {
         if (DEBUG) System.out.println(">>> DataManager.updateMonthEvent() <<<");
         // Write|Refresh month files mmyyyy.xml, mmyyyy.htm
         updateFiles.updateFileOfMonth(yesterDay, yesterMonth, yesterYear);
+        // Get rainAll of the month and the year
+        updateFiles.getAllRain(yesterDay, yesterMonth, yesterYear);
     }
 
     /**
@@ -527,15 +529,11 @@ public class DataManager implements Constants {
         }
         dataOfDay.setSunradMax(stationData.getSunradMax());
     }
-
+    
     /**
      * Update system time
      *
-     * @param day
-     * @param month
-     * @param year
-     * @param hour
-     * @param minute
+     * @param now
      */
     public void setSystemTime(LocalDateTime now) {
         this.now = now;
