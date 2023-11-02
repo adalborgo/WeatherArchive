@@ -42,14 +42,14 @@ public class UpdateFiles implements Constants {
     FileMeteoNetwork fileMeteoNetwork = new FileMeteoNetwork();
 
     /**
-     * Get and set rainAll of the month and the year
+     * Set rainAll of the month and the year
      *
      * @param day
      * @param month
      * @param year
      * @return
      */
-    public boolean getAllRain(int day, int month, int year) {
+    public boolean setAllRain(int day, int month, int year) {
         boolean error = false;
         String fullReadPathnameOfMonth = Utils.getFullPathnameOfMonth(rootOfXmlPath, day, month, year) + ".xml";
         if (new File(fullReadPathnameOfMonth).exists()) {

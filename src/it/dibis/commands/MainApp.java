@@ -29,7 +29,7 @@ import it.dibis.dataLogger.DataManager;
 public class MainApp implements Constants {
 
     // Version info id
-    public static final String CVSID = "$Id: RunApp.java, Release 0.1 29/09/2023 23:59:59 adalborgo@gmail.com";
+    public static final String CVSID = "$Id: RunApp.java, Release 0.2 20/10/2023 23:59:59 adalborgo@gmail.com";
 
     //------ DEBUG ------//
     private boolean DEBUG = false;
@@ -245,7 +245,7 @@ public class MainApp implements Constants {
                 if (minute == 3) { // (00:03:30..59)
                     dataManager.updateMonthEvent(yesterDay, yesterMonth, yesterYear);
                 } else if (minute == 5) { // (00:05:30..59)
-                    dataManager.updateYearEvent(yesterMonth, yesterYear);
+                    dataManager.updateYearEvent(yesterDay, yesterMonth, yesterYear);
                 }
             }
         }

@@ -25,7 +25,7 @@ public class DataManager implements Constants {
     //=====================================//
 
     // Revision control id
-    public static final String CVSID = "$Id: DataManager.java,v 0.11 19/10/2023 23:59:59 adalborgo $";
+    public static final String CVSID = "$Id: DataManager.java,v 0.12 02/11/2023 23:59:59 adalborgo $";
 
     private final int COMBILOG = -1;
     private final int DAVIS_JSON = 0;
@@ -183,7 +183,7 @@ public class DataManager implements Constants {
         }
 
         // Get rainAll of the month and the year
-        updateFiles.getAllRain(day, month, year);
+        updateFiles.setAllRain(day, month, year);
 
         dataOfDay.calcMean(); // dataOfDay.printFlash();
 
@@ -301,20 +301,22 @@ public class DataManager implements Constants {
         if (DEBUG) System.out.println(">>> DataManager.updateMonthEvent() <<<");
         // Write|Refresh month files mmyyyy.xml, mmyyyy.htm
         updateFiles.updateFileOfMonth(yesterDay, yesterMonth, yesterYear);
-        // Get rainAll of the month and the year
-        updateFiles.getAllRain(yesterDay, yesterMonth, yesterYear);
     }
 
     /**
      * Update all file of the year (yyyy.xml, yyyy.htm)
+     * Update all rain
      *
      * @param yesterMonth
      * @param yesterYear
      */
-    public void updateYearEvent(int yesterMonth, int yesterYear) {
+    public void updateYearEvent(int yesterDay, int yesterMonth, int yesterYear) {
         if (DEBUG) System.out.println(">>> DataManager.updateYearEvent() <<<");
         // Write|Refresh year files yyyy.xml, yyyy.htm
         updateFiles.updateFileOfYear(yesterMonth, yesterYear);
+
+        // Get rainAll of the month and the year
+        updateFiles.setAllRain(yesterDay, yesterMonth, yesterYear);
     }
 
     //--------------------------------------------------------
@@ -509,10 +511,14 @@ public class DataManager implements Constants {
                 dataOfDay.setWindSpeedMaxTime(minutesOfDay);
             }
         }
-        dataOfDay.setWindSpeedMax(stationData.getWindSpeedMax());
 
+        // The direction of the gusts presents some problems!
+        if(stationData.getWindSpeedMax() > dataOfDay.getWindSpeedMax())  {
+            dataOfDay.setWindDirectionOfMaxSpeed(stationData.getWindDirectionOfMaxSpeed());
+        }
+
+        dataOfDay.setWindSpeedMax(stationData.getWindSpeedMax());
         dataOfDay.setWindDirection(stationData.getWindDirection());
-        dataOfDay.setWindDirectionOfMaxSpeed(stationData.getWindDirectionOfMaxSpeed());
 
         // ??? RAIN ???
         // Reset lastRainfallOfDay when new day

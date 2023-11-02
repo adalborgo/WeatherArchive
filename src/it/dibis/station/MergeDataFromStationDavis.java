@@ -9,15 +9,10 @@ import it.dibis.common.Utils;
 import it.dibis.dataObjects.SharedData;
 
 /*
---- Provvisorio per sostituzione capannina!!! ---
-Sostituiti temperatura e umidita'
---------------------------------------------------
-
   Recupero dati dalla stazione Davis per guasti dalla vecchia stazione:
   - direzione del vento (03/10/21)
   - pioggia cumulata (01/11/2021)
-  Vedi: CorrectData() {
-        loadAlldataFromUrl(urlToRead);
+  Vedi: loadAlldataFromUrl(urlToRead);
  */
 public class MergeDataFromStationDavis extends StationInterface {
 
@@ -25,7 +20,7 @@ public class MergeDataFromStationDavis extends StationInterface {
     /**
      *  Revision control id
      */
-    public static final String CVSID = "$Id: StationDavisJson.java,v 0.2 05/06/2023 23:59:59 adalborgo@gmail.com $";
+    public static final String CVSID = "$Id: StationDavisJson.java,v 0.3 02/11/2023 23:59:59 adalborgo@gmail.com $";
 
     final String TIMESTAMP_KEY = "utctime";  // Current time and date
 
@@ -40,8 +35,8 @@ public class MergeDataFromStationDavis extends StationInterface {
 
     final String WINDSPEED_KEY = "windspd"; // Vento velocita' istantanea
     final String WINDDIR_KEY = "winddir"; // Vento direzione
-    final String WINDSPEED_MAX_KEY = "gust"; // Vento velocita' massimo
-    final String WINDDIR_MAX_KEY = "gustdir"; // Vento direzione velocita' massimo
+    final String WINDSPEED_MAX_KEY = "gust"; // Vento velocita' massima
+    final String WINDDIR_MAX_KEY = "gustdir"; // Vento direzione della velocita' massima
     // hlwind ???
     //final String WINDSPEED_MAX_TIME_KEY = ""; //
     final String WIND_OTHER_KEY = "hlwind"; // ???
@@ -54,24 +49,21 @@ public class MergeDataFromStationDavis extends StationInterface {
     SharedData shared = SharedData.getInstance();
 
     final String urlToRead = shared.getDavisPort();
-            //"http://www.meteoproject.it/ftp/stazioni/faenza/wflexp.json";
+    //"http://www.meteoproject.it/ftp/stazioni/faenza/wflexp.json";
 
     String alldata = null;
 
     int index = 0;
 
     /*
-        Correct 'Wind direction & Rain all' from Json file (Davis station)
+     * Correct 'Wind direction & Rain all' from Json file (Davis station)
      */
     public MergeDataFromStationDavis() {
         loadAlldataFromUrl(urlToRead);
         // System.out.println("CorrectData - Davis-alldata: "+ alldata);
         if (alldata!=null && alldata.length()>3000) {
-            //--> Sostituisci Direzione vento
             // see: getWind();
-            index = 0;
-            stationData.setWindDirection(s2f(getSingleField(WINDDIR_KEY))); // windir
-            stationData.setWindDirectionOfMaxSpeed(s2f(getSingleField( WINDDIR_MAX_KEY))); // gustdir
+            getOnly_WindDirection(); //--> Sostituisci Direzione vento
 
             // see: getRain()
             getRain(); //--> Sostituisci Pioggia
@@ -89,9 +81,9 @@ public class MergeDataFromStationDavis extends StationInterface {
     }
 
     /**
-     * Carica i dati istantanei da ogni singolo canale del logger e li carica nell'oggetto stationData
+     * Carica i dati istantanei da ogni singolo canale del logger e
+     *  li carica nell'oggetto stationData
      */
-
     public void loadAlldataFromUrl(String urlToRead) {
         URL url = null;
         String inputLine=null;
@@ -118,6 +110,7 @@ public class MergeDataFromStationDavis extends StationInterface {
 
     private void getTimestamp() {
         index = 0;
+
         String timestamp = getSingleField(TIMESTAMP_KEY);
         long unixTime = Utils.stringToLong(timestamp);
         // Integer.parseInt(timestamp); // Manca il Controllo delle eccezioni!
@@ -145,6 +138,7 @@ public class MergeDataFromStationDavis extends StationInterface {
 
     private void getTemperature() {
         index = 0;
+
         stationData.setTemperature(temperatureConvert(getSingleField(TEMPERATURE_KEY)));
 
         String[] tempMinMax = getFullField(TEMPERATURE_MINMAX_KEY);
@@ -156,6 +150,7 @@ public class MergeDataFromStationDavis extends StationInterface {
 
     private void getHumidity() {
         index = 0;
+
         stationData.setHumidity(s2f(getSingleField(HUMIDITY_KEY)));
 
         String[] humiMinMax = getFullField(HUMIDITY_MINMAX_KEY);
@@ -167,24 +162,54 @@ public class MergeDataFromStationDavis extends StationInterface {
 
     private void getWind() {
         index = 0;
-        stationData.setWindSpeed(windConvert(getSingleField(WINDSPEED_KEY))); // windspd
-        stationData.setWindDirection(s2f(getSingleField(WINDDIR_KEY))); // windir
-        stationData.setWindSpeedMax(windConvert(getSingleField(WINDSPEED_MAX_KEY))); // gust
-        stationData.setWindDirectionOfMaxSpeed(s2f(getSingleField( WINDDIR_MAX_KEY))); // gustdir
 
+        float x = windConvert(getSingleField(WINDSPEED_KEY));
+        stationData.setWindSpeed(x); // windspeed
+
+        x = s2f(getSingleField(WINDDIR_KEY));
+        stationData.setWindDirection(x); // windir
+
+        // The direction of the gusts presents some problems?!
+        x = s2f(getSingleField(WINDDIR_MAX_KEY));
+        stationData.setWindDirectionOfMaxSpeed(x); // gustdir
+
+        /*
+        WindSpeedMax: Which is the correct one?
+        stationData.setWindSpeedMax(windConvert(getSingleField(WINDSPEED_MAX_KEY))); // gust
+         */
+        // WindSpeedMax
         String[] windOther = getFullField(WIND_OTHER_KEY);
-        stationData.setWindSpeedMaxTime(getTime(windOther[3]));
+        x = windConvert(windOther[1]);
+        stationData.setWindSpeedMax(x); // WindSpeedMax
+
+        int time = getTime(windOther[3]);
+        stationData.setWindSpeedMaxTime(time); // WindSpeedMaxTime
         // System.out.println(windOther[3]);
 
-        // Others???
-        /*System.out.println(windOther[1]);
-        System.out.println(windOther[4]);
-        System.out.println(windOther[6]);*/
-        // 1 nodo = 0,514444 m/s = 1,852 km/h
+        // WindOther
+        //System.out.println("windOther[1]: " + windConvert(windOther[1])*3.6f); // Max day?
+        //System.out.println("windOther[4]: " + windConvert(windOther[4])*3.6f); // Max month?
+        //System.out.println("windOther[6]: " + windConvert(windOther[6])*3.6f); // Max year?
+        // WindSpeed in mph
+        // return 0.44704F*x; // mph -> m/s
+        // return 1.60934F*x; // mph -> km/h
+        // System.out.println("WindSpeedMax(): " + stationData.getWindSpeedMax());
+    }
+
+    private void getOnly_WindDirection() {
+        index = 0;
+
+        float x = s2f(getSingleField(WINDDIR_KEY));
+        stationData.setWindDirection(x); // windir
+
+        // The direction of the gusts presents some problems?!
+        x = s2f(getSingleField(WINDDIR_MAX_KEY));
+        stationData.setWindDirectionOfMaxSpeed(x); // gustdir
     }
 
     private void getRain() { // Rain all
         index = 0;
+
         float x = s2f(getSingleField(RAINALL_KEY));
         stationData.setRain((x>=0) ? 25.4F*x : -1); // Convert to mm
     }

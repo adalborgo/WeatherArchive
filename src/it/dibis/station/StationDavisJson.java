@@ -18,7 +18,7 @@ public class StationDavisJson extends StationInterface {
     //--- Constants ---//
 
     // Revision control id
-    public static final String CVSID = "$Id: StationDavisJson.java,v 0.2 01/09/2023 23:59:59 adalborgo@gmail.com $";
+    public static final String CVSID = "$Id: StationDavisJson.java,v 0.3 02/11/2023 23:59:59 adalborgo@gmail.com $";
 
     static final boolean DEBUG = false;
 
@@ -36,8 +36,8 @@ public class StationDavisJson extends StationInterface {
 
     final String WINDSPEED_KEY = "windspd"; // Vento velocita' istantanea
     final String WINDDIR_KEY = "winddir"; // Vento direzione
-    final String WINDSPEED_MAX_KEY = "gust"; // Vento velocita' massimo
-    final String WINDDIR_MAX_KEY = "gustdir"; // Vento direzione velocita' massimo
+    final String WINDSPEED_MAX_KEY = "gust"; // Vento velocita' massima
+    final String WINDDIR_MAX_KEY = "gustdir"; // Vento direzione della velocita' massima
     // hlwind ???
     //final String WINDSPEED_MAX_TIME_KEY = ""; //
     final String WIND_OTHER_KEY = "hlwind"; // ???
@@ -175,16 +175,26 @@ public class StationDavisJson extends StationInterface {
     }
 
     private void getWind() {
+          /*
+        stationData.setWindSpeedMax(windConvert(getSingleField(WINDSPEED_MAX_KEY))); // gust
+        stationData.setWindDirectionOfMaxSpeed(s2f(getSingleField( WINDDIR_MAX_KEY))); // gustdir
+           */
         index = 0;
         x = windConvert(getSingleField(WINDSPEED_KEY));
         stationData.setWindSpeed(x); // windspeed
 
         x = s2f(getSingleField(WINDDIR_KEY));
         stationData.setWindDirection(x); // windir
-        // stationData.setWindSpeedMax(windConvert(getSingleField(WINDSPEED_MAX_KEY))); // gust
+
+        // The direction of the gusts presents some problems?!
         x = s2f(getSingleField( WINDDIR_MAX_KEY));
         stationData.setWindDirectionOfMaxSpeed(x); // gustdir
 
+        /*
+        WindSpeedMax: Which is the correct one?
+        stationData.setWindSpeedMax(windConvert(getSingleField(WINDSPEED_MAX_KEY))); // gust
+         */
+        // WindSpeedMax
         String[] windOther = getFullField(WIND_OTHER_KEY);
         x = windConvert(windOther[1]);
         stationData.setWindSpeedMax(x); // WindSpeedMax
@@ -194,11 +204,12 @@ public class StationDavisJson extends StationInterface {
         // System.out.println(windOther[3]);
 
         // WindOther
-        //System.out.println("windOther[1]: " + windConvert(windOther[1])*3.6f); // Max giorno???
-        //System.out.println("windOther[4]: " + windConvert(windOther[4])*3.6f); // Max mese???
-        //System.out.println("windOther[6]: " + windConvert(windOther[6])*3.6f); // Max anno???
+        //System.out.println("windOther[1]: " + windConvert(windOther[1])*3.6f); // Max day?
+        //System.out.println("windOther[4]: " + windConvert(windOther[4])*3.6f); // Max month?
+        //System.out.println("windOther[6]: " + windConvert(windOther[6])*3.6f); // Max year?
         // WindSpeed in mph
         // return 0.44704F*x; // mph -> m/s
+        // return 1.60934F*x; // mph -> km/h
         // System.out.println("WindSpeedMax(): " + stationData.getWindSpeedMax());
     }
 
