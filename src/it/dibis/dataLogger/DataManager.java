@@ -25,7 +25,7 @@ public class DataManager implements Constants {
     //=====================================//
 
     // Revision control id
-    public static final String CVSID = "$Id: DataManager.java,v 0.12 02/11/2023 23:59:59 adalborgo $";
+    public static final String CVSID = "$Id: DataManager.java,v 0.13 03/11/2023 23:59:59 adalborgo $";
 
     private final int COMBILOG = -1;
     private final int DAVIS_JSON = 0;
@@ -395,7 +395,9 @@ public class DataManager implements Constants {
 
         // Update windDirection and windDirectionOfMaxSpeed
         dataOfDay.setWindDirection(stationData.getWindDirection());
-        dataOfDay.setWindDirectionOfMaxSpeed(stationData.getWindDirectionOfMaxSpeed());
+
+        // Moved to setMinMax()
+        // dataOfDay.setWindDirectionOfMaxSpeed(stationData.getWindDirectionOfMaxSpeed());
 
         //--- RAIN ---
         // For 1st record, rainfall = 0
@@ -515,10 +517,8 @@ public class DataManager implements Constants {
         // The direction of the gusts presents some problems!
         if(stationData.getWindSpeedMax() > dataOfDay.getWindSpeedMax())  {
             dataOfDay.setWindDirectionOfMaxSpeed(stationData.getWindDirectionOfMaxSpeed());
+            dataOfDay.setWindSpeedMax(stationData.getWindSpeedMax());
         }
-
-        dataOfDay.setWindSpeedMax(stationData.getWindSpeedMax());
-        dataOfDay.setWindDirection(stationData.getWindDirection());
 
         // ??? RAIN ???
         // Reset lastRainfallOfDay when new day
